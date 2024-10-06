@@ -11,10 +11,10 @@ const Page = () => {
   });
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [firms, setFirms] = useState([]);
-  const [showDataPanel, setShowDataPanel] = useState(true);
+  const [showDataPanel, setShowDataPanel] = useState(false);
   const [chartData, setChartData] = useState([]);
   const [airQualityData, setAirQualityData] = useState([]);
-  
+  const [loading, setLoading] = useState(false); // Estado para manejar el mensaje de carga
 
   const handleDateChange = ({ startDate, endDate }) => {
     setDateRange({ startDate, endDate });
@@ -22,12 +22,13 @@ const Page = () => {
 
   const handleCountrySelect = (countryCode) => {
     setSelectedCountry(countryCode);
-    setShowDataPanel(true); // Mostrar el panel al seleccionar un país
+    // El panel solo se mostrará después de que se carguen las firms
   };
 
   useEffect(() => {
     const getFirms = async () => {
       try {
+        setLoading(true); // Mostrar el mensaje de espera
         const response = await fetch(
           `https://api-hackathon-fuego.onrender.com/obtener_datos_firms/?country=${selectedCountry}&start_date=${dateRange.startDate}&end_date=${dateRange.endDate}`
         );
@@ -41,18 +42,27 @@ const Page = () => {
 
         const processedData = groupByDate(data);
         setChartData(processedData);
+
+        // Mostrar el panel solo después de que las firms estén cargadas
+        if (data.length > 0) {
+          setShowDataPanel(true);
+        } else {
+          setShowDataPanel(false);
+        }
       } catch (error) {
         console.error("Error fetching firms:", error);
+      } finally {
+        setLoading(false); // Esconder el mensaje de espera una vez cargado
       }
     };
 
     const getAirQualityData = async () => {
       try {
-
+        // Cargar datos de calidad del aire
       } catch (error) {
         console.error("Error fetching air quality data:", error);
       }
-    }
+    };
 
     if (selectedCountry && dateRange.startDate && dateRange.endDate) {
       getFirms();
@@ -75,7 +85,7 @@ const Page = () => {
     // Convertir el objeto a un array de datos para la gráfica
     return Object.entries(countsByDate).map(([acq_date, count]) => ({
       acq_date,
-      count
+      count,
     }));
   };
 
@@ -92,27 +102,35 @@ const Page = () => {
         }`}
       >
         <div className="flex flex-col w-full">
-          <div className="flex flex-row text-xl font-cabinet text-woodsmoke-50 gap-2">
-            <h4>Country report: </h4>
-            <h1>{selectedCountry}</h1>
-          </div>
-          <div className="-mt-2">
-            <h5 className="font-satoshi text-woodsmoke-300">
-              from: {dateRange.startDate} - to: {dateRange.endDate}
-            </h5>
-          </div>
-
-          {/* Información general de firms */}
-          <div id="generalFirmsInfo" className="flex flex-col w-full h-32 mt-2 gap-2">
-            <div className="flex flex-col justify-center items-center w-full h-fit rounded-lg">
-              <div className="flex w-full">
-                <p className="text-sm font-cabinet text-woodsmoke-100">Number of thermal anomalies: {firms.length}</p>
+          {loading ? (
+            <p className="text-center text-woodsmoke-100">Loading data...</p> // Mensaje de espera
+          ) : firms.length === 0 ? (
+            <p className="text-center text-woodsmoke-100">No data available</p> // Mensaje cuando no hay datos
+          ) : (
+            <>
+              <div className="flex flex-row text-xl font-cabinet text-woodsmoke-50 gap-2">
+                <h4>Country report: </h4>
+                <h1>{selectedCountry}</h1>
               </div>
-            </div>
-            <div className="flex justify-center items-center w-full h-fit rounded-lg">
-              <BarCharts data={chartData} />
-            </div>
-          </div>
+              <div className="-mt-2">
+                <h5 className="font-satoshi text-woodsmoke-300">
+                  from: {dateRange.startDate} - to: {dateRange.endDate}
+                </h5>
+              </div>
+
+              {/* Información general de firms */}
+              <div id="generalFirmsInfo" className="flex flex-col w-full h-32 mt-2 gap-2">
+                <div className="flex flex-col justify-center items-center w-full h-fit rounded-lg">
+                  <div className="flex w-full">
+                    <p className="text-sm font-cabinet text-woodsmoke-100">Number of thermal anomalies: {firms.length}</p>
+                  </div>
+                </div>
+                <div className="flex justify-center items-center w-full h-fit rounded-lg">
+                  <BarCharts data={chartData} />
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
 

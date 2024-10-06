@@ -168,9 +168,9 @@ export default function Home() {
             className="bg-white p-8 rounded-lg shadow-md text-blue-700 font-satoshi text-lg leading-relaxed text-center"
           >
             <p className="mb-4 font-bold">
-              In the application, we focus on visualizing and calculating three key variables related to wildfires. The first is Brightness, measured by satellite sensors, which indicates the intensity of the heat emitted by the fire. The second is the Fire Radiative Power (FRP), a measure of the energy released by the fire, which gives an idea of the magnitude and potential of the fire. Finally, we provide air quality data for each region, helping you visualize the environmental impact."
+              In the application, we focus on visualizing and calculating three key variables related to wildfires. The first is Brightness, measured by satellite sensors, which indicates the intensity of the heat emitted by the fire. The second is the Fire Radiative Power (FRP), a measure of the energy released by the fire, which gives an idea of the magnitude and potential of the fire. Finally, we provide air quality data for each region, helping you visualize the environmental impact.
             </p>
-            <p>Now, let's connect with our Earth!</p>
+            <p>Now, let&apos;s connect with our Earth!</p>
           </motion.div>
         </div>
       </section>

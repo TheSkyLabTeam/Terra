@@ -14,7 +14,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 
-
 // Importación dinámica de componentes que dependen del navegador
 const EarthVis = dynamic(() => import("@/app/(app)/components/earthvis"), { ssr: false });
 const BarCharts = dynamic(() => import("@/components/charts/barcharts").then(mod => mod.BarCharts), { ssr: false });
@@ -29,7 +28,7 @@ const Page = () => {
   const [chartFrp, setChartFrp] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  console.log(chartBright)
+  console.log(chartBright);
 
   const handleDateChange = ({ startDate, endDate }) => {
     setDateRange({ startDate, endDate });
@@ -108,32 +107,33 @@ const Page = () => {
     <div className="relative w-full h-full overflow-hidden">
       <div className='absolute z-10 bottom-6 left-2 hidden md:block'>
         <h1 className='text-xl font-cabinet text-woodsmoke-100'>Select a country and a date to get started</h1>
-        <p className='text-md font-satoshi text-woodsmoke-200 md:max-w-[32vw]'>Select with a click the date to start the visualization and the country. 
-        Once a date is selected, ten consecutive days from this date will be taken into account for the analysis.
-        
+        <p className='text-md font-satoshi text-woodsmoke-200 md:max-w-[32vw]'>
+          Select with a click the date to start the visualization and the country. 
+          Once a date is selected, ten consecutive days from this date will be taken into account for the analysis.
         </p>
+
         <p className='text-sm italic text-woodsmoke-300 md:max-w-[32vw] mt-4'>
-        Our application tracks three key wildfire variables: Brightness, which measures heat intensity, FRP (Fire Radiative Power) for energy released, and the number of thermal anomalies to detect hotspots. These provide a detailed view of fire behavior and impact.
+          Our application tracks three key wildfire variables: Brightness, which measures heat intensity, FRP (Fire Radiative Power) for energy released, and the number of thermal anomalies to detect hotspots. These provide a detailed view of fire behavior and impact.
         </p>
-        
       </div>
       <div className='absolute left-2 bottom-2 z-30 bg-woodsmoke-900 rounded-full px-4 lg:hidden'>
-      <Dialog className="z-30">
-        <DialogTrigger className='font-cabinet text-woodsmoke-200 p-2'>Instructions</DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <h1 className='text-xl font-cabinet text-woodsmoke-900'>Select a country and a date to get started</h1>
-          </DialogHeader>
-          <DialogDescription>
-            <p className='text-md font-satoshi text-woodsmoke-800 md:max-w-[32vw]'>Select with a click the date to start the visualization and the country. 
-              Once a date is selected, ten consecutive days from this date will be taken into account for the analysis.
-            </p>
-            <p className='text-sm italic text-woodsmoke-400 md:max-w-[32vw] mt-4'>
-            Our application tracks three key wildfire variables: Brightness, which measures heat intensity, FRP (Fire Radiative Power) for energy released, and the number of thermal anomalies to detect hotspots. These provide a detailed view of fire behavior and impact.
-            </p>
-          </DialogDescription>
-        </DialogContent>
-      </Dialog>
+        <Dialog className="z-30">
+          <DialogTrigger className='font-cabinet text-woodsmoke-200 p-2'>Instructions</DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <h1 className='text-xl font-cabinet text-woodsmoke-900'>Select a country and a date to get started</h1>
+            </DialogHeader>
+            <DialogDescription>
+              <p className='text-md font-satoshi text-woodsmoke-800 md:max-w-[32vw]'>
+                Select with a click the date to start the visualization and the country. 
+                Once a date is selected, ten consecutive days from this date will be taken into account for the analysis.
+              </p>
+              <p className='text-sm italic text-woodsmoke-400 md:max-w-[32vw] mt-4'>
+                Our application tracks three key wildfire variables: Brightness, which measures heat intensity, FRP (Fire Radiative Power) for energy released, and the number of thermal anomalies to detect hotspots. These provide a detailed view of fire behavior and impact.
+              </p>
+            </DialogDescription>
+          </DialogContent>
+        </Dialog>
       </div>
       
       <div className="absolute top-0 left-0 w-full h-full z-0">
@@ -177,7 +177,7 @@ const Page = () => {
                   </div>
                 </div>
                 <div className="flex justify-center items-center w-full h-fit rounded-lg">
-                  <BarCharts data={chartData} title={'Termal anomalies by date'}/>
+                  <BarCharts data={chartData} title={'Thermal anomalies by date'}/>
                 </div>
                 {/* Gráfica del promedio de bright_ti4 */}
                 <div className="flex justify-center items-center w-full h-fit rounded-lg mt-4">
@@ -191,10 +191,6 @@ const Page = () => {
             </>
           )}
         </div>
-      </div>
-
-      <div className="absolute top-14 left-2 md:bottom-2 md:right-2 w-[50vw] md:w-[30vw] z-9">
-        <DatePicker onDateChange={handleDateChange} />
       </div>
     </div>
   );

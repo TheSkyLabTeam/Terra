@@ -3,11 +3,13 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import Globe from "react-globe.gl";
 
-const EarthVis = ({ onCountrySelect }) => { // Acepta onCountrySelect como prop
+const EarthVis = ({ onCountrySelect, firms }) => {
   const [countries, setCountries] = useState([]);
   const globeEl = useRef();
   const [autoRotate, setAutoRotate] = useState(true);
   const [selectedCountry, setSelectedCountry] = useState(null);
+  const [hoveredPolygon, setHoveredPolygon] = useState(null);
+  firms = firms || [];
 
   useEffect(() => {
     const globe = globeEl.current;
@@ -35,23 +37,18 @@ const EarthVis = ({ onCountrySelect }) => { // Acepta onCountrySelect como prop
   const handlePolygonClick = useCallback((polygon) => {
     const globe = globeEl.current;
     
-    // Detener la rotación automática
     setAutoRotate(false);
 
-    // Obtener el código del país
     const countryCode = polygon.properties.ADM0_A3;
     setSelectedCountry(countryCode);
     
-    // Llama a la función de callback para enviar el país seleccionado al padre
     if (onCountrySelect) {
-      onCountrySelect(countryCode); // Envía el countryCode al padre
+      onCountrySelect(countryCode);
     }
 
-    // Calcular el centro del polígono
     const { coordinates } = polygon.geometry;
     let lat = 0, lng = 0, count = 0;
 
-    // Función para procesar coordenadas
     const processCoords = (coords) => {
       coords.forEach(coord => {
         lng += coord[0];
@@ -60,32 +57,28 @@ const EarthVis = ({ onCountrySelect }) => { // Acepta onCountrySelect como prop
       });
     };
 
-    // Manejar diferentes tipos de geometrías
     if (polygon.geometry.type === "Polygon") {
       processCoords(coordinates[0]);
     } else if (polygon.geometry.type === "MultiPolygon") {
       coordinates.forEach(poly => processCoords(poly[0]));
     }
 
-    // Calcular el promedio
     lat /= count;
     lng /= count;
 
-    // Hacer zoom al polígono
     globe.pointOfView({ lat, lng, altitude: 0.8 }, 1000);
-  }, [onCountrySelect]); // Añadir onCountrySelect como dependencia
+  }, [onCountrySelect]);
 
   const handleResetView = useCallback(() => {
     const globe = globeEl.current;
     
-    // Reanudar la rotación automática
     setAutoRotate(true);
-
-    // Restablecer la vista
     globe.pointOfView({ lat: 0, lng: 0, altitude: 2 }, 1000);
-
-    // Limpiar el país seleccionado
     setSelectedCountry(null);
+  }, []);
+
+  const handlePolygonHover = useCallback((polygon) => {
+    setHoveredPolygon(polygon);
   }, []);
 
   return (
@@ -99,9 +92,29 @@ const EarthVis = ({ onCountrySelect }) => { // Acepta onCountrySelect como prop
         
         lineHoverPrecision={0}
         polygonsData={countries.features?.filter(d => d.properties.ISO_A2 !== 'AQ')}
-        polygonCapColor={d => 'rgba(77, 185, 227, 0.15)'}
+        polygonCapColor={d => d === hoveredPolygon ? 'rgba(77, 185, 227, 0.3)' : 'rgba(77, 185, 227, 0.15)'}
+        polygonSideColor={() => 'rgba(77, 185, 227, 0.15)'}
         polygonStrokeColor={() => '#c1e5f6'}
+        polygonAltitude={d => d === hoveredPolygon ? 0.005 : 0.01}
         onPolygonClick={handlePolygonClick}
+        onPolygonHover={handlePolygonHover}
+        polygonsTransitionDuration={200}
+
+        pointsData={firms}
+        pointLat="latitude"
+        pointLng="longitude"
+        pointColor={() => 'red'}
+        pointAltitude={0.01}
+        pointRadius={0.2}
+        pointsMerge={false}
+        pointLabel={d => `
+          <div>
+            <b>${d.country_id}</b><br/>
+            Date: ${d.acq_date}<br/>
+            Time: ${d.acq_time}<br/>
+            Brightness: ${d.bright_ti4}
+          </div>
+        `}
       />
     </div>
   );

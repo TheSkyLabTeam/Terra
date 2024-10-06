@@ -43,7 +43,7 @@ const Page = () => {
   return (
     <div className="relative w-full h-full">
       <div className="absolute top-0 left-0 w-full h-full z-0">
-        <EarthVis onCountrySelect={handleCountrySelect} />
+        <EarthVis onCountrySelect={handleCountrySelect} firms={firms}/>
       </div>
       <div className="absolute bottom-2 right-2 z-10">
         <DatePicker onDateChange={handleDateChange} />

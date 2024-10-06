@@ -142,7 +142,8 @@ const EarthVis = ({ onCountrySelect, firms = [] }) => {
             Time: ${d.acq_time}<br/>
             Brightness: ${d.bright_ti4}
           </div>
-        `}
+          `
+        }
       />
     </div>
   );

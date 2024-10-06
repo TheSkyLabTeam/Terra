@@ -5,8 +5,8 @@ const layout = ({
     children,
 }) => {
   return (
-    <div className='relative w-screen h-screen p-2 bg-woodsmoke-950'>
-        <div className='absolute z-10'>
+    <div className='relative w-screen h-screen bg-woodsmoke-950'>
+        <div className='absolute z-10 p-2'>
             <LocationLabel />
         </div>
         {children}

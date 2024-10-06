@@ -105,7 +105,7 @@ const Page = () => {
   };
 
   return (
-    <div className="relative w-full h-full overflow-hidden">
+    <div className="relative w-full h-[100svh] overflow-hidden">
       <div className='absolute z-10 bottom-6 left-2 hidden md:block'>
         <h1 className='text-xl font-cabinet text-woodsmoke-100'>Select a country and a date to get started</h1>
         <p className='text-md font-satoshi text-woodsmoke-200 md:max-w-[32vw]'>Select with a click the date to start the visualization and the country. 

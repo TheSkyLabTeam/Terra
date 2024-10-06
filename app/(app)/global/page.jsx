@@ -1,20 +1,20 @@
 "use client";
-import EarthVis from "@/app/(app)/components/earthvis";
-import { BarCharts } from "@/components/charts/barcharts";
-import { DatePicker } from "@/components/ui/datepicker";
+
+import dynamic from 'next/dynamic';
 import { useState, useEffect } from "react";
+import { DatePicker } from "@/components/ui/datepicker";
+
+// Importación dinámica de componentes que dependen del navegador
+const EarthVis = dynamic(() => import("@/app/(app)/components/earthvis"), { ssr: false });
+const BarCharts = dynamic(() => import("@/components/charts/barcharts").then(mod => mod.BarCharts), { ssr: false });
 
 const Page = () => {
-  const [dateRange, setDateRange] = useState({
-    startDate: null,
-    endDate: null,
-  });
+  const [dateRange, setDateRange] = useState({ startDate: null, endDate: null });
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [firms, setFirms] = useState([]);
   const [showDataPanel, setShowDataPanel] = useState(false);
   const [chartData, setChartData] = useState([]);
-  const [airQualityData, setAirQualityData] = useState([]);
-  const [loading, setLoading] = useState(false); // Estado para manejar el mensaje de carga
+  const [loading, setLoading] = useState(false);
 
   const handleDateChange = ({ startDate, endDate }) => {
     setDateRange({ startDate, endDate });
@@ -22,13 +22,14 @@ const Page = () => {
 
   const handleCountrySelect = (countryCode) => {
     setSelectedCountry(countryCode);
-    // El panel solo se mostrará después de que se carguen las firms
   };
 
   useEffect(() => {
     const getFirms = async () => {
+      if (!selectedCountry || !dateRange.startDate || !dateRange.endDate) return;
+
       try {
-        setLoading(true); // Mostrar el mensaje de espera
+        setLoading(true);
         const response = await fetch(
           `https://api-hackathon-fuego.onrender.com/obtener_datos_firms/?country=${selectedCountry}&start_date=${dateRange.startDate}&end_date=${dateRange.endDate}`
         );
@@ -39,50 +40,26 @@ const Page = () => {
 
         const data = await response.json();
         setFirms(data);
-
-        const processedData = groupByDate(data);
-        setChartData(processedData);
-
-        // Mostrar el panel solo después de que las firms estén cargadas
-        if (data.length > 0) {
-          setShowDataPanel(true);
-        } else {
-          setShowDataPanel(false);
-        }
+        setChartData(groupByDate(data));
+        setShowDataPanel(data.length > 0);
       } catch (error) {
         console.error("Error fetching firms:", error);
+        setShowDataPanel(false);
       } finally {
-        setLoading(false); // Esconder el mensaje de espera una vez cargado
+        setLoading(false);
       }
     };
 
-    const getAirQualityData = async () => {
-      try {
-        // Cargar datos de calidad del aire
-      } catch (error) {
-        console.error("Error fetching air quality data:", error);
-      }
-    };
-
-    if (selectedCountry && dateRange.startDate && dateRange.endDate) {
-      getFirms();
-    }
+    getFirms();
   }, [selectedCountry, dateRange.startDate, dateRange.endDate]);
 
   const groupByDate = (firms) => {
     const countsByDate = firms.reduce((acc, firm) => {
       const { acq_date } = firm;
-
-      if (!acc[acq_date]) {
-        acc[acq_date] = 0;
-      }
-
-      acc[acq_date] += 1;
-
+      acc[acq_date] = (acc[acq_date] || 0) + 1;
       return acc;
     }, {});
 
-    // Convertir el objeto a un array de datos para la gráfica
     return Object.entries(countsByDate).map(([acq_date, count]) => ({
       acq_date,
       count,
@@ -95,7 +72,6 @@ const Page = () => {
         <EarthVis onCountrySelect={handleCountrySelect} firms={firms} />
       </div>
 
-      {/* Panel de información con transición desde la derecha */}
       <div
         className={`absolute right-0 top-0 w-[30vw] h-full bg-woodsmoke-900/60 backdrop-blur-sm border border-woodsmoke-500 p-2 rounded-lg z-10 transition-transform duration-700 ease-in-out ${
           showDataPanel ? "translate-x-0" : "translate-x-full"
@@ -103,9 +79,9 @@ const Page = () => {
       >
         <div className="flex flex-col w-full">
           {loading ? (
-            <p className="text-center text-woodsmoke-100">Loading data...</p> // Mensaje de espera
+            <p className="text-center text-woodsmoke-100">Loading data...</p>
           ) : firms.length === 0 ? (
-            <p className="text-center text-woodsmoke-100">No data available</p> // Mensaje cuando no hay datos
+            <p className="text-center text-woodsmoke-100">No data available</p>
           ) : (
             <>
               <div className="flex flex-row text-xl font-cabinet text-woodsmoke-50 gap-2">
@@ -118,7 +94,6 @@ const Page = () => {
                 </h5>
               </div>
 
-              {/* Información general de firms */}
               <div id="generalFirmsInfo" className="flex flex-col w-full h-32 mt-2 gap-2">
                 <div className="flex flex-col justify-center items-center w-full h-fit rounded-lg">
                   <div className="flex w-full">
@@ -134,7 +109,6 @@ const Page = () => {
         </div>
       </div>
 
-      {/* DatePicker siempre visible en la parte inferior derecha */}
       <div className="absolute bottom-2 right-2 w-[50vw] md:w-[30vw] z-10">
         <DatePicker onDateChange={handleDateChange} />
       </div>

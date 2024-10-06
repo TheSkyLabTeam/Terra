@@ -16,12 +16,16 @@
     "clsx": "^2.1.1",
     "lenis": "^1.1.13",
     "lucide-react": "^0.447.0",
+    "material-symbols": "^0.24.0",
     "next": "14.2.14",
     "react": "^18",
     "react-dom": "^18",
+    "react-globe.gl": "^2.27.2",
+    "react-world-flags": "^1.6.0",
     "tailwind-merge": "^2.5.3",
     "tailwindcss-animate": "^1.0.7",
-    "three": "^0.169.0"
+    "three": "^0.169.0",
+    "three-globe": "^2.32.0"
   },
   "devDependencies": {
     "eslint": "^8",

@@ -1,8 +1,11 @@
+import EarthVis from "@/app/(app)/components/earthvis"
 
 
 const Page = () => {
   return (
-    <div>Page</div>
+    <div className="relative w-full h-full overflow-hidden">
+      <EarthVis />
+    </div>
   )
 }
 

@@ -31,8 +31,10 @@ const EarthVis = ({ onCountrySelect, firms = [] }) => {
     fetchData();
   }, []); // Empty dependency array ensures fetch is only done once on mount
 
-  // Resize handler
+  // Resize handler with window check
   useEffect(() => {
+    if (typeof window === "undefined") return; // Verificar que 'window' está definido
+
     const globe = globeEl.current;
 
     globe.controls().autoRotate = autoRotate;

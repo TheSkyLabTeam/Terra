@@ -1,5 +1,6 @@
 "use client";
 import EarthVis from "@/app/(app)/components/earthvis";
+import { BarCharts } from "@/components/charts/barcharts";
 import { DatePicker } from "@/components/ui/datepicker";
 import { useState, useEffect } from "react";
 
@@ -12,6 +13,8 @@ const Page = () => {
   const [firms, setFirms] = useState([]);
   const [showDataPanel, setShowDataPanel] = useState(true);
   const [chartData, setChartData] = useState([]);
+  const [airQualityData, setAirQualityData] = useState([]);
+  
 
   const handleDateChange = ({ startDate, endDate }) => {
     setDateRange({ startDate, endDate });
@@ -42,6 +45,14 @@ const Page = () => {
         console.error("Error fetching firms:", error);
       }
     };
+
+    const getAirQualityData = async () => {
+      try {
+
+      } catch (error) {
+        console.error("Error fetching air quality data:", error);
+      }
+    }
 
     if (selectedCountry && dateRange.startDate && dateRange.endDate) {
       getFirms();
@@ -76,7 +87,7 @@ const Page = () => {
 
       {/* Panel de información con transición desde la derecha */}
       <div
-        className={`absolute right-0 top-0 w-[30vw] h-full bg-woodsmoke-900 border-2 border-woodsmoke-800 p-2 rounded-lg z-10 transition-transform duration-700 ease-in-out ${
+        className={`absolute right-0 top-0 w-[30vw] h-full bg-woodsmoke-900/60 backdrop-blur-sm border border-woodsmoke-500 p-2 rounded-lg z-10 transition-transform duration-700 ease-in-out ${
           showDataPanel ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -98,8 +109,8 @@ const Page = () => {
                 <p className="text-sm font-cabinet text-woodsmoke-100">Number of thermal anomalies: {firms.length}</p>
               </div>
             </div>
-            <div className="flex justify-center items-center w-full h-full bg-woodsmoke-600 border-2 border-woodsmoke-500 rounded-lg">
-              {/* Otro contenido */}
+            <div className="flex justify-center items-center w-full h-fit rounded-lg">
+              <BarCharts data={chartData} />
             </div>
           </div>
         </div>

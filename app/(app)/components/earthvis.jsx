@@ -1,16 +1,37 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import Globe from "react-globe.gl";
+import React from "react";
 
-const EarthVis = ({ onCountrySelect, firms }) => {
+const EarthVis = ({ onCountrySelect, firms = [] }) => {
   const [countries, setCountries] = useState([]);
   const globeEl = useRef();
+  const containerRef = useRef();
+  const [dimensions, setDimensions] = useState({ width: 1, height: 1 });
   const [autoRotate, setAutoRotate] = useState(true);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [hoveredPolygon, setHoveredPolygon] = useState(null);
-  firms = firms || [];
 
+  // Fetch GeoJSON data only on initial mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch("/countries.geojson");
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const data = await res.json();
+        console.log('GeoJSON data loaded:', data);
+        setCountries(data);
+      } catch (error) {
+        console.error('Error loading GeoJSON:', error);
+      }
+    };
+    fetchData();
+  }, []); // Empty dependency array ensures fetch is only done once on mount
+
+  // Resize handler
   useEffect(() => {
     const globe = globeEl.current;
 
@@ -18,30 +39,34 @@ const EarthVis = ({ onCountrySelect, firms }) => {
     globe.controls().autoRotateSpeed = 0.1;
     globe.controls().maxZoom = 1000;
 
-    fetch("/countries.geojson")
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then(data => {
-        console.log('GeoJSON data loaded:', data);
-        setCountries(data);
-      })
-      .catch(error => {
-        console.error('Error loading GeoJSON:', error);
-      });
-  }, [autoRotate]);
+    const handleResize = () => {
+      const { width, height } = containerRef.current.getBoundingClientRect();
+      setDimensions({ width, height });
+      globe.camera().aspect = width / height;
+      globe.camera().updateProjectionMatrix();
+      globe.renderer().setSize(width, height);
+    };
 
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Initial call
+
+    return () => window.removeEventListener('resize', handleResize); // Clean up on unmount
+  }, [autoRotate]); // Depend on autoRotate to ensure proper handling when it changes
+
+  // Memoize the filtered countries to avoid re-filtering on each render
+  const filteredCountries = useMemo(() => {
+    return countries.features?.filter(d => d.properties.ISO_A2 !== 'AQ') || [];
+  }, [countries]);
+
+  // Optimize polygon click handling
   const handlePolygonClick = useCallback((polygon) => {
     const globe = globeEl.current;
-    
-    setAutoRotate(false);
+
+    if (autoRotate) setAutoRotate(false);
 
     const countryCode = polygon.properties.ADM0_A3;
     setSelectedCountry(countryCode);
-    
+
     if (onCountrySelect) {
       onCountrySelect(countryCode);
     }
@@ -67,31 +92,32 @@ const EarthVis = ({ onCountrySelect, firms }) => {
     lng /= count;
 
     globe.pointOfView({ lat, lng, altitude: 0.8 }, 1000);
-  }, [onCountrySelect]);
+  }, [autoRotate, onCountrySelect]); // Memoized to avoid recreating on every render
 
+  // Handle hover and reset view
   const handleResetView = useCallback(() => {
     const globe = globeEl.current;
-    
     setAutoRotate(true);
     globe.pointOfView({ lat: 0, lng: 0, altitude: 2 }, 1000);
     setSelectedCountry(null);
-  }, []);
+  }, []); // Doesn't depend on any external state
 
   const handlePolygonHover = useCallback((polygon) => {
     setHoveredPolygon(polygon);
   }, []);
 
   return (
-    <div className="relative z-0"> 
+    <div ref={containerRef} className="relative z-0 w-full h-full"> 
       <Globe
-        className="w-full h-full relative z-0"
+        width={dimensions.width}
+        height={dimensions.height}
         ref={globeEl}
         globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
         backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
         bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
         
         lineHoverPrecision={0}
-        polygonsData={countries.features?.filter(d => d.properties.ISO_A2 !== 'AQ')}
+        polygonsData={filteredCountries}
         polygonCapColor={d => d === hoveredPolygon ? 'rgba(77, 185, 227, 0.3)' : 'rgba(77, 185, 227, 0.15)'}
         polygonSideColor={() => 'rgba(77, 185, 227, 0.15)'}
         polygonStrokeColor={() => '#c1e5f6'}
@@ -120,4 +146,4 @@ const EarthVis = ({ onCountrySelect, firms }) => {
   );
 };
 
-export default EarthVis;
+export default React.memo(EarthVis);

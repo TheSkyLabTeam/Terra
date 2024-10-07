@@ -124,8 +124,10 @@ const Page = () => {
             <h1 className='text-xl font-cabinet text-woodsmoke-900'>Select a country and a date to get started</h1>
           </DialogHeader>
           <DialogDescription>
-            <p className='text-md font-satoshi text-woodsmoke-800 md:max-w-[32vw]'>Select with a click the date to start the visualization and the country. 
-              Once a date is selected, ten consecutive days from this date will be taken into account for the analysis.
+            <p className='text-md font-satoshi text-woodsmoke-800 md:max-w-[32vw]'>
+              Select with a click the date to start the visualization and the country. 
+              Once a date is selected, ten consecutive days from this date will be taken into account for the analysis. 
+              You can also click on the red points to view detailed information about each record.
             </p>
             <p className='text-sm italic text-woodsmoke-400 md:max-w-[32vw] mt-4'>
             Our application tracks three key wildfire variables: Brightness, which measures heat intensity, FRP (Fire Radiative Power) for energy released, and the number of thermal anomalies to detect hotspots. These provide a detailed view of fire behavior and impact.

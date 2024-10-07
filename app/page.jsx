@@ -47,6 +47,9 @@ export default function Home() {
             className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600"
             style={{ opacity }}
           />
+          <div className='absolute inset-0'>
+
+          </div>
           <div className="relative z-10 space-y-6 max-w-4xl mx-auto px-6">
             <motion.h1 
               className="font-cabinet text-6xl md:text-8xl font-bold text-white"

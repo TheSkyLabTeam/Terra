@@ -7,6 +7,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import Flag from 'react-world-flags';
 import { CalendarIcon, ClockIcon, FlameIcon, MapIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 const EarthVis = ({ onCountrySelect, dateRange, firms = [] }) => {
   const [countries, setCountries] = useState([]);
@@ -173,16 +179,62 @@ const EarthVis = ({ onCountrySelect, dateRange, firms = [] }) => {
       <Dialog className="max-w-3xl" open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="flex flex-row items-center gap-2">{selectedPoint?.country_id || 'Point Details'} <Flag className="w-6 h-6" code={selectedPoint?.country_id.toUpperCase()}/></DialogTitle>
+            <DialogTitle className="flex flex-row font-cabinet items-center gap-2">{selectedPoint?.country_id || 'Point Details'} <Flag className="w-6 h-6" code={selectedPoint?.country_id.toUpperCase()}/></DialogTitle>
             <DialogDescription>
               {selectedPoint && (
                 <>
-                  <div className="bg-cerulean-200 flex flex-row items-center justify-between gap-2 p-2 rounded-md">
-                    <div className="flex flex-row items-center justify-center text-cerulean-800"><CalendarIcon /> {selectedPoint.acq_date}</div>
-                    <div className="flex flex-row items-center justify-center text-cerulean-800"><ClockIcon /> {selectedPoint.acq_time}</div>
-                    <div className="flex flex-row items-center justify-center text-cerulean-800"><FlameIcon /> {selectedPoint.bright_ti4}</div>
-                    <div className="flex flex-row items-center justify-center text-cerulean-800"><MapIcon />  [{selectedPoint.latitude} Lon: {selectedPoint.longitude}]</div>
-                  </div>
+                  <TooltipProvider>
+                    <div className="bg-cerulean-200 flex flex-row items-center justify-between gap-2 p-2 rounded-md">
+                      <div className="flex flex-col items-center justify-center text-cerulean-800">
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <CalendarIcon className="h-6 w-6" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Date</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <span className="text-xs mt-1">{selectedPoint.acq_date}</span>
+                        <span className="text-xs">Date</span>
+                      </div>
+                      <div className="flex flex-col items-center justify-center text-cerulean-800">
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <ClockIcon className="h-6 w-6" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Acquisition Time</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <span className="text-xs mt-1">{selectedPoint.acq_time}</span>
+                        <span className="text-xs">Time</span>
+                      </div>
+                      <div className="flex flex-col items-center justify-center text-cerulean-800">
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <FlameIcon className="h-6 w-6" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Brightness captured by sensor</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <span className="text-xs mt-1">{selectedPoint.bright_ti4}</span>
+                        <span className="text-xs">Brightness</span>
+                      </div>
+                      <div className="flex flex-col items-center justify-center text-cerulean-800">
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <MapIcon className="h-6 w-6" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Latitude and Longitude</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <span className="text-xs mt-1">[{selectedPoint.latitude}, {selectedPoint.longitude}]</span>
+                        <span className="text-xs">Coordinates</span>
+                      </div>
+                    </div>
+                  </TooltipProvider>
                   {airQualityData && (
                     <div className="mt-4">
                       <h3 className="text-lg font-cabinet mb-2">Air Quality Data</h3>

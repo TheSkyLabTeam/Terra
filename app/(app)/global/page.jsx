@@ -1,5 +1,6 @@
 "use client";
 
+import BackgroundAudio from '@/components/ui/backgroud'
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from "react";
 import { DatePicker } from "@/components/ui/datepicker";
@@ -109,7 +110,7 @@ const Page = () => {
       <div className='absolute z-10 bottom-6 left-2 hidden md:block select-none'>
         <h1 className='text-xl font-cabinet text-woodsmoke-100'>Select a country and a date to get started</h1>
         <p className='text-md font-satoshi text-woodsmoke-200 md:max-w-[32vw]'>Select with a click the date to start the visualization and the country. 
-        Once a date is selected, ten consecutive days from this date will be taken into account for the analysis.</p>
+        Once a date is selected, ten consecutive days from this date will be taken into account for the analysis. You can also click on the red points to view detailed information about each record.</p>
 
         <p className='text-sm italic text-woodsmoke-300 md:max-w-[32vw] mt-4'>
         Our application tracks three key wildfire variables: Brightness, which measures heat intensity, FRP (Fire Radiative Power) for energy released, and the number of thermal anomalies to detect hotspots. These provide a detailed view of fire behavior and impact.
@@ -197,6 +198,7 @@ const Page = () => {
       <div className="absolute top-14 left-2 md:bottom-2 md:right-2 w-[50vw] md:w-[30vw] z-9 select-none">
         <DatePicker onDateChange={handleDateChange} />
       </div>
+      <BackgroundAudio src="/426471__frankum__pad-chords-001-loop-mode.wav" />
     </div>
   );
 };

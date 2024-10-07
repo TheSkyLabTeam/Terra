@@ -106,7 +106,7 @@ const Page = () => {
 
   return (
     <div className="relative w-full h-[100svh] overflow-hidden">
-      <div className='absolute z-10 bottom-6 left-2 hidden md:block'>
+      <div className='absolute z-10 bottom-6 left-2 hidden md:block select-none'>
         <h1 className='text-xl font-cabinet text-woodsmoke-100'>Select a country and a date to get started</h1>
         <p className='text-md font-satoshi text-woodsmoke-200 md:max-w-[32vw]'>Select with a click the date to start the visualization and the country. 
         Once a date is selected, ten consecutive days from this date will be taken into account for the analysis.</p>
@@ -116,7 +116,7 @@ const Page = () => {
         </p>
         
       </div>
-      <div className='absolute left-2 bottom-2 z-30 bg-woodsmoke-900 rounded-full px-4 lg:hidden'>
+      <div className='absolute left-2 bottom-2 z-30 bg-woodsmoke-900 rounded-full px-4 lg:hidden select-none'>
       <Dialog className="z-30">
         <DialogTrigger className='font-cabinet text-woodsmoke-200 p-2'>Instructions</DialogTrigger>
         <DialogContent>
@@ -194,7 +194,7 @@ const Page = () => {
         </div>
       </div>
 
-      <div className="absolute top-14 left-2 md:bottom-2 md:right-2 w-[50vw] md:w-[30vw] z-9">
+      <div className="absolute top-14 left-2 md:bottom-2 md:right-2 w-[50vw] md:w-[30vw] z-9 select-none">
         <DatePicker onDateChange={handleDateChange} />
       </div>
     </div>

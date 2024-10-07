@@ -39,6 +39,13 @@ export const BarCharts = ({ data, title }) => {
               tickMargin={10}
               axisLine={false}
               color="#d7d8e0"
+              tickFormatter={(value) => {
+                const date = new Date(value);
+                return date.toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                });
+              }}
             />
             <ChartTooltip
               cursor={false}

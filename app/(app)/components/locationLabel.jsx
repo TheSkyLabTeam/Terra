@@ -20,7 +20,7 @@ const LocationLabel = () => {
   const { label, icon } = getLabelAndIcon();
 
   return (
-    <div className="flex justify-center items-center w-fit h-fit gap-2">
+    <div className="flex justify-center items-center w-fit h-fit gap-2 select-none">
       <div className="relative grid place-items-center w-fit h-10 bg-woodsmoke-950 text-woodsmoke-50 border-2 border-woodsmoke-900 font-cabinet px-6 rounded-full overflow-hidden">
         <div className="absolute bg-woodsmoke-700 w-8 h-8 z-0 -left-2 -bottom-3 rounded-full blur-sm" />
         <div className="absolute bg-woodsmoke-300 w-4 h-4 -left-1 bottom-2 blur-sm" />

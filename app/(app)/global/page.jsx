@@ -136,7 +136,7 @@ const Page = () => {
       </div>
       
       <div className="absolute top-0 left-0 w-full h-full z-0">
-        <EarthVis onCountrySelect={handleCountrySelect} firms={firms} startDate={dateRange.startDate} endDate={dateRange.endDate}/>
+        <EarthVis onCountrySelect={handleCountrySelect} firms={firms} dateRange={dateRange}/>
       </div>
 
       <div

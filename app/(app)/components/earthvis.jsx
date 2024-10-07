@@ -1,10 +1,14 @@
-"use client";
+'use client';
 
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import Globe from "react-globe.gl";
 import React from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import Flag from 'react-world-flags';
+import { CalendarIcon, ClockIcon, FlameIcon, MapIcon } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
-const EarthVis = ({ onCountrySelect, firms = [] }) => {
+const EarthVis = ({ onCountrySelect, dateRange, firms = [] }) => {
   const [countries, setCountries] = useState([]);
   const globeEl = useRef();
   const containerRef = useRef();
@@ -13,8 +17,9 @@ const EarthVis = ({ onCountrySelect, firms = [] }) => {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [hoveredPolygon, setHoveredPolygon] = useState(null);
   const [selectedPoint, setSelectedPoint] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [airQualityData, setAirQualityData] = useState(null);
 
-  // Fetch GeoJSON data only on initial mount
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -30,11 +35,10 @@ const EarthVis = ({ onCountrySelect, firms = [] }) => {
       }
     };
     fetchData();
-  }, []); // Empty dependency array ensures fetch is only done once on mount
+  }, []);
 
-  // Resize handler with window check
   useEffect(() => {
-    if (typeof window === "undefined") return; // Verificar que 'window' está definido
+    if (typeof window === "undefined") return;
 
     const globe = globeEl.current;
 
@@ -51,17 +55,15 @@ const EarthVis = ({ onCountrySelect, firms = [] }) => {
     };
 
     window.addEventListener('resize', handleResize);
-    handleResize(); // Initial call
+    handleResize();
 
-    return () => window.removeEventListener('resize', handleResize); // Clean up on unmount
-  }, [autoRotate]); // Depend on autoRotate to ensure proper handling when it changes
+    return () => window.removeEventListener('resize', handleResize);
+  }, [autoRotate]);
 
-  // Memoize the filtered countries to avoid re-filtering on each render
   const filteredCountries = useMemo(() => {
     return countries.features?.filter(d => d.properties.ISO_A2 !== 'AQ') || [];
   }, [countries]);
 
-  // Optimize polygon click handling
   const handlePolygonClick = useCallback((polygon) => {
     const globe = globeEl.current;
 
@@ -95,21 +97,42 @@ const EarthVis = ({ onCountrySelect, firms = [] }) => {
     lng /= count;
 
     globe.pointOfView({ lat, lng, altitude: 0.8 }, 1000);
-  }, [autoRotate, onCountrySelect]); // Memoized to avoid recreating on every render
+  }, [autoRotate, onCountrySelect]);
 
-  // Handle hover and reset view
   const handleResetView = useCallback(() => {
     const globe = globeEl.current;
     setAutoRotate(true);
     globe.pointOfView({ lat: 0, lng: 0, altitude: 2 }, 1000);
     setSelectedCountry(null);
-  }, []); // Doesn't depend on any external state
+    setSelectedPoint(null);
+  }, []);
 
   const handlePolygonHover = useCallback((polygon) => {
     setHoveredPolygon(polygon);
   }, []);
 
-  
+  const handlePointClick = useCallback(async (point) => {
+    setSelectedPoint(point);
+    setIsDialogOpen(true);
+    if (autoRotate) setAutoRotate(false);
+    globeEl.current.pointOfView({ lat: point.latitude, lng: point.longitude, altitude: 0.8 }, 1000);
+
+    try {
+      const response = await fetch(`https://api-hackathon-fuego.onrender.com/calidad_aire/historico/?lat=${point.latitude}&lon=${point.longitude}&fecha_inicio=${dateRange.startDate}&fecha_fin=${dateRange.endDate}`);
+      const data = await response.json();
+      setAirQualityData(data);
+    } catch (error) {
+      console.error('Error fetching air quality data:', error);
+    }
+  }, [autoRotate, dateRange]);
+
+  const htmlElementsData = useMemo(() => {
+    return firms.map(firm => ({
+      ...firm,
+      size: 8,
+      color: 'red'
+    }));
+  }, [firms]);
 
   return (
     <div ref={containerRef} className="relative z-0 w-full h-full"> 
@@ -131,23 +154,62 @@ const EarthVis = ({ onCountrySelect, firms = [] }) => {
         onPolygonHover={handlePolygonHover}
         polygonsTransitionDuration={200}
 
-        pointsData={firms}
-        pointLat="latitude"
-        pointLng="longitude"
-        pointColor={() => 'red'}
-        pointAltitude={0.01}
-        pointRadius={0.2}
-        pointsMerge={false}
-        pointLabel={d => `
-          <div>
-            <b>${d.country_id}</b><br/>
-            Date: ${d.acq_date}<br/>
-            Time: ${d.acq_time}<br/>
-            Brightness: ${d.bright_ti4}
-          </div>
-          `
-        }
+        htmlElementsData={htmlElementsData}
+        htmlElement={d => {
+          const el = document.createElement('div');
+          el.style.backgroundColor = d.color;
+          el.style.width = `${d.size}px`;
+          el.style.height = `${d.size}px`;
+          el.style.borderRadius = '50%';
+          el.style.pointerEvents = 'auto';
+          el.style.cursor = 'pointer';
+          el.onclick = () => handlePointClick(d);
+          return el;
+        }}
+        htmlLat="latitude"
+        htmlLng="longitude"
+        htmlAltitude={0.01}
       />
+      <Dialog className="max-w-3xl" open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex flex-row items-center gap-2">{selectedPoint?.country_id || 'Point Details'} <Flag className="w-6 h-6" code={selectedPoint?.country_id.toUpperCase()}/></DialogTitle>
+            <DialogDescription>
+              {selectedPoint && (
+                <>
+                  <div className="bg-cerulean-200 flex flex-row items-center justify-between gap-2 p-2 rounded-md">
+                    <div className="flex flex-row items-center justify-center text-cerulean-800"><CalendarIcon /> {selectedPoint.acq_date}</div>
+                    <div className="flex flex-row items-center justify-center text-cerulean-800"><ClockIcon /> {selectedPoint.acq_time}</div>
+                    <div className="flex flex-row items-center justify-center text-cerulean-800"><FlameIcon /> {selectedPoint.bright_ti4}</div>
+                    <div className="flex flex-row items-center justify-center text-cerulean-800"><MapIcon />  [{selectedPoint.latitude} Lon: {selectedPoint.longitude}]</div>
+                  </div>
+                  {airQualityData && (
+                    <div className="mt-4">
+                      <h3 className="text-lg font-cabinet mb-2">Air Quality Data</h3>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        <Card>
+                          <CardContent className="p-4 flex flex-col items-center justify-center">
+                            <span className="text-2xl font-cabinet antialiased">{airQualityData.promedio_aqi.toFixed(2)}</span>
+                            <span className="text-sm font-satoshi text-woodsmoke-600">AQI</span>
+                          </CardContent>
+                        </Card>
+                        {Object.entries(airQualityData.promedio_componentes).map(([key, value]) => (
+                          <Card key={key}>
+                            <CardContent className="p-4 flex flex-col items-center justify-center">
+                              <span className="text-2xl font-cabinet antialiased">{typeof value === 'number' ? value.toFixed(2) : value}</span>
+                              <span className="text-sm font-satoshi text-woodsmoke-600 antialiased">{key.toUpperCase()}</span>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

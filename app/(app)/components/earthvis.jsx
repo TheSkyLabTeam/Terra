@@ -12,6 +12,7 @@ const EarthVis = ({ onCountrySelect, firms = [] }) => {
   const [autoRotate, setAutoRotate] = useState(true);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [hoveredPolygon, setHoveredPolygon] = useState(null);
+  const [selectedPoint, setSelectedPoint] = useState(null);
 
   // Fetch GeoJSON data only on initial mount
   useEffect(() => {
@@ -107,6 +108,8 @@ const EarthVis = ({ onCountrySelect, firms = [] }) => {
   const handlePolygonHover = useCallback((polygon) => {
     setHoveredPolygon(polygon);
   }, []);
+
+  
 
   return (
     <div ref={containerRef} className="relative z-0 w-full h-full"> 

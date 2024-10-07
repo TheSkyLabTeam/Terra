@@ -1,18 +1,15 @@
-import Flag from 'react-world-flags';
+const PointDetails = ({ point, onClose }) => {
+  if (!point) return null;
 
-const PointLabel = async (props) => {
-    const response = await (await fetch(`/parameters/${props.country}`)).json();
   return (
-    <div className="w-56 h-fit bg-woodsmoke-200 text-woodsmoke-900 px-2 py-1 rounded-lg">
-        <div className='flex flex-row justify-between'>
-            <Flag code={props.country.toUpperCase()} className="w-5 h-5" />
-            <p className='text-xl font-cabinet text-woodsmoke-900'>{props.country.toUpperCase()} </p>
-        </div>
-        <div id="parametersContainer">
-            
-        </div>
+    <div className="absolute top-4 right-4 bg-white p-4 rounded-lg shadow-lg z-10">
+      <button onClick={onClose} className="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+        &times;
+      </button>
+      <h3 className="font-bold mb-2">{point.country_id}</h3>
+      <p>Date: {point.acq_date}</p>
+      <p>Time: {point.acq_time}</p>
+      <p>Brightness: {point.bright_ti4}</p>
     </div>
-  )
-}
-
-export default PointLabel
+  );
+};

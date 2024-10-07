@@ -140,7 +140,7 @@ const Page = () => {
       </div>
 
       <div
-        className={`absolute right-0 top-0 md:w-[30vw] w-[100vw] overflow-y-scroll h-full bg-woodsmoke-900 border border-woodsmoke-500 p-2 rounded-lg z-10 transition-transform duration-700 ease-in-out ${
+        className={`absolute right-0 top-0 md:w-[30vw] w-[100vw] overflow-y-scroll h-full bg-woodsmoke-900/50 backdrop-blur-md border border-woodsmoke-500 p-2 rounded-lg z-10 transition-transform duration-700 ease-in-out ${
           showDataPanel ? "translate-x-0" : "translate-x-full"
         }`}
       >

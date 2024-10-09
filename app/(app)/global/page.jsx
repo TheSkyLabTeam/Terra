@@ -1,26 +1,16 @@
 "use client";
 
-import BackgroundAudio from '@/components/ui/backgroud'
-import dynamic from 'next/dynamic';
 import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { DatePicker } from "@/components/ui/datepicker";
-import { XIcon } from 'lucide-react';
-import PointLabel from '../components/pointlabel';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { XIcon, BarChartIcon } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import dynamic from 'next/dynamic';
 
-
-// Importación dinámica de componentes que dependen del navegador
 const EarthVis = dynamic(() => import("@/app/(app)/components/earthvis"), { ssr: false });
 const BarCharts = dynamic(() => import("@/components/charts/barcharts").then(mod => mod.BarCharts), { ssr: false });
 
-const Page = () => {
+export default function Page() {
   const [dateRange, setDateRange] = useState({ startDate: null, endDate: null });
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [firms, setFirms] = useState([]);
@@ -29,8 +19,7 @@ const Page = () => {
   const [chartBright, setChartBright] = useState([]);
   const [chartFrp, setChartFrp] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  console.log(chartBright)
+  const { toast } = useToast();
 
   const handleDateChange = ({ startDate, endDate }) => {
     setDateRange({ startDate, endDate });
@@ -71,6 +60,16 @@ const Page = () => {
     getFirms();
   }, [selectedCountry, dateRange.startDate, dateRange.endDate]);
 
+  useEffect(() => {
+    if (loading) {
+      toast({
+        title: "Loading data...",
+        description: "Please wait while we fetch the latest information.",
+        duration: 3000,
+      });
+    }
+  }, [loading, toast]);
+
   const groupByDate = (firms) => {
     const countsByDate = firms.reduce((acc, firm) => {
       const { acq_date } = firm;
@@ -106,48 +105,44 @@ const Page = () => {
   };
 
   return (
-    <div className="relative w-full h-[100svh] overflow-hidden">
-      <div className='absolute z-10 bottom-6 left-2 hidden md:block select-none'>
-        <h1 className='text-xl font-cabinet text-woodsmoke-100'>Select a country and a date to get started</h1>
-        <p className='text-md font-satoshi text-woodsmoke-200 md:max-w-[32vw]'>Select with a click the date to start the visualization and the country. 
-        Once a date is selected, ten consecutive days from this date will be taken into account for the analysis. You can also click on the red points to view detailed information about each record.</p>
-
-        <p className='text-sm italic text-woodsmoke-300 md:max-w-[32vw] mt-4'>
-        Our application tracks three key wildfire variables: Brightness, which measures heat intensity, FRP (Fire Radiative Power) for energy released, and the number of thermal anomalies to detect hotspots. These provide a detailed view of fire behavior and impact.
-        </p>
-        
-      </div>
-      <div className='absolute left-2 bottom-2 z-30 bg-woodsmoke-900 rounded-full px-4 lg:hidden select-none'>
-      <Dialog className="z-30">
-        <DialogTrigger className='font-cabinet text-woodsmoke-200 p-2'>Instructions</DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <h1 className='text-xl font-cabinet text-woodsmoke-900'>Select a country and a date to get started</h1>
-          </DialogHeader>
-          <DialogDescription>
-            <p className='text-md font-satoshi text-woodsmoke-800 md:max-w-[32vw]'>
-              Select with a click the date to start the visualization and the country. 
-              Once a date is selected, ten consecutive days from this date will be taken into account for the analysis. 
-              You can also click on the red points to view detailed information about each record.
-            </p>
-            <p className='text-sm italic text-woodsmoke-400 md:max-w-[32vw] mt-4'>
-            Our application tracks three key wildfire variables: Brightness, which measures heat intensity, FRP (Fire Radiative Power) for energy released, and the number of thermal anomalies to detect hotspots. These provide a detailed view of fire behavior and impact.
-            </p>
-          </DialogDescription>
-        </DialogContent>
-      </Dialog>
-      </div>
-      
+    <div className="relative w-[100svw] h-[100svh] overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-full z-0">
         <EarthVis onCountrySelect={handleCountrySelect} firms={firms} dateRange={dateRange}/>
       </div>
 
+      <AnimatePresence>
+        {!selectedCountry && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            transition={{ duration: 0.5 }}
+            className="absolute top-1/2 left-1/2 text-center z-10"
+          >
+            <h2 className="text-4xl text-woodsmoke-100/80 font-cabinet transform -translate-y-1/2 -translate-x-1/2 select-none">Select a country</h2>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {selectedCountry && !dateRange.startDate && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            transition={{ duration: 0.5 }}
+            className="absolute top-1/2 left-1/2 text-center z-10"
+          >
+            <h2 className="text-4xl text-white font-cabinet transform -translate-y-1/2 -translate-x-1/2 select-none">Select a date</h2>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div
-        className={`absolute right-0 top-0 md:w-[30vw] w-[100vw] overflow-y-scroll h-full bg-woodsmoke-900/50 backdrop-blur-md border border-woodsmoke-500 p-2 rounded-lg z-10 transition-transform duration-700 ease-in-out ${
+        className={`absolute right-0 top-0 md:w-[30vw] w-[100vw] overflow-y-scroll h-full bg-woodsmoke-900/50 backdrop-blur-md border border-woodsmoke-500 p-2 rounded-lg z-20 transition-transform duration-700 ease-in-out ${
           showDataPanel ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        {/* Botón para cerrar el panel */}
         <button
           className="absolute top-2 right-2 p-2 bg-woodsmoke-400 text-woodsmoke-100 rounded-full"
           onClick={handleClosePanel}
@@ -181,11 +176,9 @@ const Page = () => {
                 <div className="flex justify-center items-center w-full h-fit rounded-lg">
                   <BarCharts data={chartData} title={'Termal anomalies by date'}/>
                 </div>
-                {/* Gráfica del promedio de bright_ti4 */}
                 <div className="flex justify-center items-center w-full h-fit rounded-lg mt-4">
                   <BarCharts data={chartBright} title={'Brightness average by date'}/>
                 </div>
-                {/* Gráfica del promedio de frp */}
                 <div className="flex justify-center items-center w-full h-fit rounded-lg mt-4">
                   <BarCharts data={chartFrp} title={'Fire Radiative Power average by date'}/>
                 </div>
@@ -195,12 +188,26 @@ const Page = () => {
         </div>
       </div>
 
-      <div className="absolute top-14 left-2 md:bottom-2 md:right-2 w-[50vw] md:w-[30vw] z-9 select-none">
-        <DatePicker onDateChange={handleDateChange} />
-      </div>
-      <BackgroundAudio src="/426471__frankum__pad-chords-001-loop-mode.wav" />
+      <motion.div
+        initial={false}
+        animate={selectedCountry ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+        transition={{ duration: 0.5 }}
+        className="absolute top-14 left-2 md:bottom-2 md:right-2 w-[50vw] md:w-[30vw] z-30 select-none"
+      >
+        <DatePicker onDateChange={handleDateChange} className="bg-woodsmoke-50 text-woodsmoke-900" />
+      </motion.div>
+
+      {loading && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="absolute bottom-4 right-4 z-30 bg-woodsmoke-800 text-woodsmoke-100 p-2 rounded-md flex items-center space-x-2"
+        >
+          <BarChartIcon className="animate-pulse" />
+          <span className="font-satoshi">Loading data...</span>
+        </motion.div>
+      )}
     </div>
   );
-};
-
-export default Page;
+}

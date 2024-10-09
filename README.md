@@ -37,7 +37,7 @@
 <br />
 <div align="center">
   <a>
-    <img src="astroutb.webp" alt="Logo" width="180" height="180">
+    <img src="astroutb.webp" alt="Logo" width="1000" height="500">
   </a>
 
   <h3 align="center">EarthConnect: Wildfire and Air Quality Explorer</h3>
@@ -103,7 +103,7 @@
 
 <div align="center">
   <a>
-    <img src="mockup.png" alt="Screenshot" width="1000" height="500">
+    <img src="mockup.png" alt="Screenshot" width="700" height="500">
   </a>
 </div>
 

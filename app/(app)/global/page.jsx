@@ -36,7 +36,7 @@ export default function Page() {
       try {
         setLoading(true);
         const response = await fetch(
-          `https://api-hackathon-fuego.onrender.com/obtener_datos_firms/?country=${selectedCountry}&start_date=${dateRange.startDate}&end_date=${dateRange.endDate}`
+          `https://apihackathonfuego-production.up.railway.app/obtener_datos_firms/?country=${selectedCountry}&start_date=${dateRange.startDate}&end_date=${dateRange.endDate}`
         );
 
         if (!response.ok) {

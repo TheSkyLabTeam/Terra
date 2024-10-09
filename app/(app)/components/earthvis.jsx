@@ -124,7 +124,7 @@ const EarthVis = ({ onCountrySelect, dateRange, firms = [] }) => {
     globeEl.current.pointOfView({ lat: point.latitude, lng: point.longitude, altitude: 0.8 }, 1000);
 
     try {
-      const response = await fetch(`https://apihackathonfuego-production.up.railway.app/calidad_aire/historico/?lat=${point.latitude}&lon=${point.longitude}&fecha_inicio=${dateRange.startDate}&fecha_fin=${dateRange.endDate}`);
+      const response = await fetch(`https://api-hackathon-fuego-xwd5.vercel.app/calidad_aire/historico/?lat=${point.latitude}&lon=${point.longitude}&fecha_inicio=${dateRange.startDate}&fecha_fin=${dateRange.endDate}`);
       const data = await response.json();
       setAirQualityData(data);
     } catch (error) {

@@ -136,7 +136,7 @@ const EarthVis = ({ onCountrySelect, dateRange, firms = [] }) => {
     return firms.map(firm => ({
       ...firm,
       size: 8,
-      color: 'red'
+      color: '#d94423'
     }));
   }, [firms]);
 
@@ -176,19 +176,22 @@ const EarthVis = ({ onCountrySelect, dateRange, firms = [] }) => {
         htmlLng="longitude"
         htmlAltitude={0.01}
       />
-      <Dialog className="max-w-3xl" open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-[90vw] w-full sm:max-w-[85vw] md:max-w-[75vw] lg:max-w-[65vw] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex flex-row font-cabinet items-center gap-2">{selectedPoint?.country_id || 'Point Details'} <Flag className="w-6 h-6" code={selectedPoint?.country_id.toUpperCase()}/></DialogTitle>
+            <DialogTitle className="flex flex-row font-cabinet items-center gap-2 text-lg sm:text-xl">
+              {selectedPoint?.country_id || 'Point Details'} 
+              <Flag className="w-5 h-5 sm:w-6 sm:h-6" code={selectedPoint?.country_id.toUpperCase()}/>
+            </DialogTitle>
             <DialogDescription>
               {selectedPoint && (
                 <>
                   <TooltipProvider>
-                    <div className="bg-cerulean-200 flex flex-row items-center justify-between gap-2 p-2 rounded-md">
+                    <div className="bg-cerulean-200 flex flex-wrap items-center justify-center gap-2 md:gap-6 p-2 rounded-md">
                       <div className="flex flex-col items-center justify-center text-cerulean-800">
                         <Tooltip>
                           <TooltipTrigger>
-                            <CalendarIcon className="h-6 w-6" />
+                            <CalendarIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                           </TooltipTrigger>
                           <TooltipContent>
                             <p>Date</p>
@@ -200,7 +203,7 @@ const EarthVis = ({ onCountrySelect, dateRange, firms = [] }) => {
                       <div className="flex flex-col items-center justify-center text-cerulean-800">
                         <Tooltip>
                           <TooltipTrigger>
-                            <ClockIcon className="h-6 w-6" />
+                            <ClockIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                           </TooltipTrigger>
                           <TooltipContent>
                             <p>Acquisition Time</p>
@@ -212,7 +215,7 @@ const EarthVis = ({ onCountrySelect, dateRange, firms = [] }) => {
                       <div className="flex flex-col items-center justify-center text-cerulean-800">
                         <Tooltip>
                           <TooltipTrigger>
-                            <FlameIcon className="h-6 w-6" />
+                            <FlameIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                           </TooltipTrigger>
                           <TooltipContent>
                             <p>Brightness captured by sensor</p>
@@ -224,7 +227,7 @@ const EarthVis = ({ onCountrySelect, dateRange, firms = [] }) => {
                       <div className="flex flex-col items-center justify-center text-cerulean-800">
                         <Tooltip>
                           <TooltipTrigger>
-                            <MapIcon className="h-6 w-6" />
+                            <MapIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                           </TooltipTrigger>
                           <TooltipContent>
                             <p>Latitude and Longitude</p>
@@ -237,19 +240,19 @@ const EarthVis = ({ onCountrySelect, dateRange, firms = [] }) => {
                   </TooltipProvider>
                   {airQualityData && (
                     <div className="mt-4">
-                      <h3 className="text-lg font-cabinet mb-2">Air Quality Data</h3>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                      <h3 className="text-base sm:text-lg font-cabinet mb-2">Air Quality Data</h3>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-4">
                         <Card>
-                          <CardContent className="p-4 flex flex-col items-center justify-center">
-                            <span className="text-2xl font-cabinet antialiased">{airQualityData.promedio_aqi.toFixed(2)}</span>
-                            <span className="text-sm font-satoshi text-woodsmoke-600">AQI</span>
+                          <CardContent className="p-2 sm:p-4 flex flex-col items-center justify-center">
+                            <span className="text-lg sm:text-2xl font-cabinet antialiased">{airQualityData.promedio_aqi.toFixed(2)}</span>
+                            <span className="text-xs sm:text-sm font-satoshi text-woodsmoke-600">AQI</span>
                           </CardContent>
                         </Card>
                         {Object.entries(airQualityData.promedio_componentes).map(([key, value]) => (
                           <Card key={key}>
-                            <CardContent className="p-4 flex flex-col items-center justify-center">
-                              <span className="text-2xl font-cabinet antialiased">{typeof value === 'number' ? value.toFixed(2) : value}</span>
-                              <span className="text-sm font-satoshi text-woodsmoke-600 antialiased">{key.toUpperCase()}</span>
+                            <CardContent className="p-2 sm:p-4 flex flex-col items-center justify-center">
+                              <span className="text-lg sm:text-2xl font-cabinet antialiased">{typeof value === 'number' ? value.toFixed(2) : value}</span>
+                              <span className="text-xs sm:text-sm font-satoshi text-woodsmoke-600 antialiased">{key.toUpperCase()}</span>
                             </CardContent>
                           </Card>
                         ))}

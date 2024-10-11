@@ -6,6 +6,7 @@ import { DatePicker } from "@/components/ui/datepicker";
 import { XIcon, BarChartIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import dynamic from 'next/dynamic';
+import Flag from 'react-world-flags';
 
 const EarthVis = dynamic(() => import("@/app/(app)/components/earthvis"), { ssr: false });
 const BarCharts = dynamic(() => import("@/components/charts/barcharts").then(mod => mod.BarCharts), { ssr: false });
@@ -35,6 +36,7 @@ export default function Page() {
 
       try {
         setLoading(true);
+        setShowDataPanel(false); // Close the panel while loading
         const response = await fetch(
           `https://api-hackathon-fuego-xwd5.vercel.app/obtener_datos_firms/?country=${selectedCountry}&start_date=${dateRange.startDate}&end_date=${dateRange.endDate}`
         );
@@ -48,27 +50,38 @@ export default function Page() {
         setChartData(groupByDate(data));
         setChartBright(calculateAverage(data, 'bright_ti4'));
         setChartFrp(calculateAverage(data, 'frp'));
-        setShowDataPanel(data.length > 0);
+        
+        if (data.length > 0) {
+          toast({
+            title: "Data loaded successfully",
+            description: "The data is now ready to view.",
+            duration: 3000,
+            style: { background: '#62d723', color: 'white' }
+          });
+          setTimeout(() => setShowDataPanel(true), 100); // Slight delay to ensure toast appears first
+        } else {
+          toast({
+            title: "No data available",
+            description: "There is no data for the selected country and date range.",
+            duration: 3000,
+            style: { background: '#f7f7f8', color: 'black' }
+          });
+        }
       } catch (error) {
         console.error("Error fetching firms:", error);
-        setShowDataPanel(false);
+        toast({
+          title: "Error loading data",
+          description: "An error occurred while fetching the data.",
+          duration: 3000,
+          style: { background: '#d73523', color: 'white' }
+        });
       } finally {
         setLoading(false);
       }
     };
 
     getFirms();
-  }, [selectedCountry, dateRange.startDate, dateRange.endDate]);
-
-  useEffect(() => {
-    if (loading) {
-      toast({
-        title: "Loading data...",
-        description: "Please wait while we fetch the latest information.",
-        duration: 3000,
-      });
-    }
-  }, [loading, toast]);
+  }, [selectedCountry, dateRange.startDate, dateRange.endDate, toast]);
 
   const groupByDate = (firms) => {
     const countsByDate = firms.reduce((acc, firm) => {
@@ -104,6 +117,14 @@ export default function Page() {
     setShowDataPanel(false);
   };
 
+  const getCountryName = (code) => {
+    const countries = {
+      COL: "Colombia",
+      // Add more country codes and names as needed
+    };
+    return countries[code] || code;
+  };
+
   return (
     <div className="relative w-[100svw] h-[100svh] overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-full z-0">
@@ -117,9 +138,9 @@ export default function Page() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
             transition={{ duration: 0.5 }}
-            className="absolute top-1/2 left-1/2 text-center z-10"
+            className="absolute bottom-2 left-1/2 text-center z-10"
           >
-            <h2 className="text-4xl text-woodsmoke-100/80 font-cabinet transform -translate-y-1/2 -translate-x-1/2 select-none">Select a country</h2>
+            <h2 className="text-2xl md:text-4xl text-woodsmoke-50/80 font-cabinet transform -translate-x-1/2 select-none">Select a country</h2>
           </motion.div>
         )}
       </AnimatePresence>
@@ -131,15 +152,34 @@ export default function Page() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 50 }}
             transition={{ duration: 0.5 }}
-            className="absolute top-1/2 left-1/2 text-center z-10"
+            className="absolute bottom-2 left-1/2 text-center z-10"
           >
-            <h2 className="text-4xl text-white font-cabinet transform -translate-y-1/2 -translate-x-1/2 select-none">Select a date</h2>
+            <h2 className="text-2xl md:text-4xl text-white font-cabinet transform -translate-x-1/2 select-none">Select a date</h2>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {selectedCountry && dateRange.startDate && (
+          <motion.div
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            transition={{ duration: 0.5 }}
+            className="absolute bottom-4 left-0 z-10 px-4"
+          >
+            <p className="text-lg text-woodsmoke-50/80 font-satoshi select-none md:max-w-[32vw] mx-auto">
+            Select the red circles to see more details about the air quality for those coordinates in the selected date range.
+            </p>
+            <p className="text-sm italic text-woodsmoke-300 select-none md:max-w-[32vw] mt-4 mx-auto">
+              Our application tracks three key wildfire variables: Brightness, which measures heat intensity, FRP (Fire Radiative Power) for energy released, and the number of thermal anomalies to detect hotspots. These provide a detailed view of fire behavior and impact.
+            </p>
           </motion.div>
         )}
       </AnimatePresence>
 
       <div
-        className={`absolute right-0 top-0 md:w-[30vw] w-[100vw] overflow-y-scroll h-full bg-woodsmoke-900/50 backdrop-blur-md border border-woodsmoke-500 p-2 rounded-lg z-20 transition-transform duration-700 ease-in-out ${
+        className={`absolute right-0 top-0 md:w-[30vw] w-[100vw] overflow-y-scroll h-full bg-woodsmoke-950 lg:bg-woodsmoke-900/50 lg:backdrop-blur-md border border-woodsmoke-500 p-2 rounded-lg z-50 transition-transform duration-700 ease-in-out ${
           showDataPanel ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -157,9 +197,10 @@ export default function Page() {
             <p className="text-center text-woodsmoke-100">No data available</p>
           ) : (
             <>
-              <div className="flex flex-row text-xl font-cabinet text-woodsmoke-50 gap-2">
+              <div className="flex flex-row text-xl font-cabinet text-woodsmoke-50 gap-2 items-center">
                 <h4>Country report: </h4>
-                <h1>{selectedCountry}</h1>
+                <h1>{getCountryName(selectedCountry)}</h1>
+                <Flag code={selectedCountry} className="w-6 h-4" />
               </div>
               <div className="-mt-2">
                 <h5 className="font-satoshi text-woodsmoke-300">
@@ -174,7 +215,7 @@ export default function Page() {
                   </div>
                 </div>
                 <div className="flex justify-center items-center w-full h-fit rounded-lg">
-                  <BarCharts data={chartData} title={'Termal anomalies by date'}/>
+                  <BarCharts data={chartData} title={'Thermal anomalies by date'}/>
                 </div>
                 <div className="flex justify-center items-center w-full h-fit rounded-lg mt-4">
                   <BarCharts data={chartBright} title={'Brightness average by date'}/>

@@ -41,96 +41,26 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-300 to-blue-400 text-blue-900">
-      <header
-        className={`fixed w-full z-50 transition-all duration-300 ${isScrolled
-          ? "bg-blue-200 shadow-md"
-          : ""}`}
-      >
-        <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Link
-              href="/"
-              className={`font-cabinet text-3xl md:text-4xl font-bold ${isScrolled
-                ? "text-blue-800"
-                : "text-blue-100"} transition-colors duration-300`}
-            >
-              EarthConnect
-            </Link>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <Link
-              href="#team"
-              className={`font-satoshi text-lg ${isScrolled
-                ? "text-blue-700"
-                : "text-blue-100"} hover:text-blue-300 transition-colors duration-200`}
-            >
-              Learn More
-            </Link>
-          </motion.div>
-        </nav>
-      </header>
-
+    <div
+      className="min-h-screen bg-fixed bg-cover"
+      style={{ backgroundImage: `url('./bgImageEarth.webp')` }}
+    >
       <main>
-        <section className="h-screen flex items-center justify-center text-center relative overflow-hidden">
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-600"
-            style={{ opacity }}
-          />
-          <div className="absolute inset-0" />
-          <div className="relative z-10 space-y-6 max-w-4xl mx-auto px-6">
-            <motion.h1
-              className="font-cabinet text-6xl md:text-8xl font-bold text-white"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6 }}
-            >
-              Connect with the Earth
-            </motion.h1>
-            <motion.p
-              className="font-satoshi text-xl md:text-2xl text-blue-100"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              Wildfires and Air Quality in Real Time
-            </motion.p>
-            <motion.p
-              className="font-satoshi text-lg md:text-xl text-blue-200 max-w-2xl mx-auto"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
+        <section className="h-screen flex items-end p-16 relative overflow-hidden">
+          <div className="relative z-10 text-start mix-blend-normal">
+            <h1 className="font-sunday text-white text-9xl">
+              EARTH <br /> CONNECT
+            </h1>
+            <p className="text-white text-start font-satoshi text-3xl w-[37vw]">
               Discover how wildfires affect the air we breathe. Explore
               real-time data, visualize the impact, and take action for a
               healthier planet.
-            </motion.p>
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-            >
-              <motion.button
-                whileHover={{ scale: 1.05, backgroundColor: "#1881b1" }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-blue-500 text-white font-satoshi font-bold py-3 px-8 rounded-full transition-all duration-200"
-              >
-                <Link href="./global">Explore Now</Link>{" "}
-                <ArrowRight className="inline-block ml-2" />
-              </motion.button>
-            </motion.div>
+            </p>
           </div>
+          <div className="absolute top-0 left-0 h-full w-full bg-[#3000EE] mix-blend-saturation" />
         </section>
 
-        <section id="features" className="py-20 bg-blue-200">
+        <section id="features" className="py-20 bg-none">
           <div className="container mx-auto px-6">
             <h2 className="font-cabinet text-4xl md:text-5xl font-bold text-center text-blue-800 mb-12">
               Key Features

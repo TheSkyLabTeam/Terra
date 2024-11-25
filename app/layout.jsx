@@ -8,8 +8,14 @@ const cabinet = localFont({
   variable: '--font-cabinet',
 })
 
+const sunday = localFont({
+  src: "./fonts/SundayMasthead-Regular.woff",
+  display: "auto",
+  variable: '--font-sunday',
+})
+
 const satoshi = localFont({
-  src: "./fonts/SatoshiMedium.woff",
+  src: "./fonts/Satoshi-Variable.woff2",
   display: "swap",
   variable: '--font-satoshi',
 })
@@ -23,7 +29,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${cabinet.variable} ${satoshi.variable} antialiased`}
+        className={`${cabinet.variable} ${satoshi.variable} ${sunday.variable} antialiased`}
       >
         {children}
         <Analytics />

@@ -10,7 +10,8 @@ module.exports = {
     extend: {
       fontFamily: {
         cabinet: ["var(--font-cabinet)"],
-        satoshi: ["var(--font-satoshi)"]
+        satoshi: ["var(--font-satoshi)"],
+        sunday: ["var(--font-sunday)"]
       },
       colors: {
         background: "var(--background)",

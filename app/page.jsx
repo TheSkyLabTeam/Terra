@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import {
@@ -13,11 +13,13 @@ import {
   BarChart
 } from "lucide-react";
 import Lenis from "lenis";
+import HeroSection from "@/components/landing/herosection";
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
+
 
   useEffect(() => {
     const lenis = new Lenis();
@@ -46,19 +48,8 @@ export default function Home() {
       style={{ backgroundImage: `url('./bgImageEarth.webp')` }}
     >
       <main>
-        <section className="h-screen flex items-end p-16 relative overflow-hidden">
-          <div className="relative z-10 text-start mix-blend-normal">
-            <h1 className="font-sunday text-white text-9xl">
-              EARTH <br /> CONNECT
-            </h1>
-            <p className="text-white text-start font-satoshi text-3xl w-[37vw]">
-              Discover how wildfires affect the air we breathe. Explore
-              real-time data, visualize the impact, and take action for a
-              healthier planet.
-            </p>
-          </div>
-          <div className="absolute top-0 left-0 h-full w-full bg-[#3000EE] mix-blend-saturation" />
-        </section>
+        <HeroSection />
+        <section className="h-screen" />
 
         <section id="features" className="py-20 bg-none">
           <div className="container mx-auto px-6">

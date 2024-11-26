@@ -13,7 +13,7 @@ import {
   BarChart
 } from "lucide-react";
 import Lenis from "lenis";
-import HeroSection from "@/components/landing/herosection";
+import HeroSection from "@/components/landing/hero-section/herosection";
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);

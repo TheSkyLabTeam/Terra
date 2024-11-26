@@ -1,6 +1,7 @@
-"use client"
+"use client";
 import { useRef } from "react";
 
+import HeroSectionButton from "./herosectionbutton";
 const HeroSection = () => {
   let imgs = [];
   let currentIndex = 0;
@@ -74,14 +75,14 @@ const HeroSection = () => {
         imgs.push(ref);
         return (
           <img
-            className="absolute hidden mix-blend-normal z-10 w-[20vw]"
+            className="absolute hidden mix-blend-normal z-10 w-[20vw] select-none"
             key={i}
             ref={ref}
             src={`./termal/${i}.jpg`}
           />
         );
       })}
-      <div className="relative z-20 text-start mix-blend-normal">
+      <div className="relative z-20 text-start mix-blend-normal select-none">
         <h1 className="font-sunday text-white text-8xl">
           EARTH <br /> CONNECT
         </h1>
@@ -89,6 +90,7 @@ const HeroSection = () => {
           Discover how wildfires affect the air we breathe. Explore real-time
           data, visualize the impact, and take action for a healthier planet.
         </p>
+        <HeroSectionButton />
       </div>
       <div className="absolute top-0 left-0 h-full w-full bg-[#3000EE] mix-blend-saturation" />
     </section>

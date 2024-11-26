@@ -68,7 +68,7 @@ const HeroSection = () => {
       onMouseMove={e => {
         manageMouseMove(e);
       }}
-      className="h-svh flex items-end p-16 relative overflow-hidden"
+      className="h-svh flex items-center p-16 relative overflow-hidden"
     >
       {[...Array(7).keys()].map((_, i) => {
         const ref = useRef(null);

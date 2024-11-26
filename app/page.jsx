@@ -49,7 +49,7 @@ export default function Home() {
     >
       <main>
         <HeroSection />
-        <section className="h-screen" />
+        <section className="h-[50svh]" />
 
         <section id="features" className="py-20 bg-none">
           <div className="container mx-auto px-6">

@@ -38,7 +38,7 @@ export default function Page() {
         setLoading(true);
         setShowDataPanel(false); // Close the panel while loading
         const response = await fetch(
-          `https://api-hackathon-fuego-xwd5.vercel.app/obtener_datos_firms/?country=${selectedCountry}&start_date=${dateRange.startDate}&end_date=${dateRange.endDate}`
+          `https://api-hackathon-fuego-a7vk.vercel.app/obtener_datos_firms/?country=${selectedCountry}&start_date=${dateRange.startDate}&end_date=${dateRange.endDate}`
         );
 
         if (!response.ok) {
